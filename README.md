@@ -98,3 +98,90 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
+### Данные
+type TPayment = 'card' | 'cash' | '';    - Способ оплаты карта или наличные
+
+Товар: 
+interface IProduct {
+  id: string;
+  description: string;
+  image: string;
+  title: string;
+  category: string;
+  price: number | null;
+} 
+Покупатель: 
+interface IBuyer {
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+}
+### Модели данных
+#### Класс ProductCatalogModel
+Хранит массив всех товаров. Хранит товар, выбранный для подробного отображения. 
+
+Конструктор:  
+`constructor(initial?: IProduct[])`
+
+Поля класса:  
+`_items: IProduct[]` - массив всех товаров.
+`_selected: IProduct | null` — выбранный товар.
+
+Методы класса:  
+`getItems(): IProduct[]` — получить массив товаров из модели.
+`setSelected(product: IProduct | null): void` — сохранить товар для подробного отображения.
+`getById(id: string): IProduct | undefined` — получить один товар по его id.
+`setItems(items: IProduct[]): void` — сохранить массив товаров полученного в параметрах метода.
+`getSelected(): IProduct | null` — получить товар для подробного отображения.
+
+#### Класс CartModel
+Хранит массив товаров, выбранных покупателем для покупки.
+
+Конструктор:  
+`constructor(initial?: IProduct[])`
+
+Поля класса:  
+`_items: IProduct[]` - содержимое корзины.
+
+Методы класса:  
+`add(product: IProduct): void` — добавить товар, который был получен в параметре в массив корзины.
+`remove(id: string): void` — удаление товара, полученного в параметре из массива корзины.
+`getCount(): number` — получить количество товаров в корзине.
+`getItems(): IProduct[]` — получить массив товаров, которые находятся в корзине.
+`getTotal(): number` — получить стоимость всех товаров в корзине.
+`has(id: string): boolean` — проверить наличие товара в корзине по его id, полученного в параметр метода.
+`clear(): void` — очистить корзину.
+
+#### Класс BuyerModel
+Хранит следующие данные о покупателе (вид оплаты, адреc, телефон, email).
+
+Конструктор:  
+`constructor(initial?: Partial<IBuyer>)`
+
+Поля класса:  
+`_payment: TPayment | null` — способ оплаты.
+`_email: string` — e-mail.
+`_phone: string` — телефон.
+`_address: string` — адрес.
+
+Методы класса: 
+`validate(): { valid: boolean; errors: Partial<Record<keyof IBuyer, string>> }` — валидация данных. 
+`getData(): IBuyer` — получение всех данных покупателя.
+`setData(data: Partial<IBuyer>): void` - сохранение данных в модели. Один общий метод или отдельные методы для каждого поля.
+`clear(): void` - очистка данных покупателя.
+
+### Слой коммуникации
+
+##### Класс LarekApi
+Использует композицию, чтобы выполнить запрос на сервер с помощью метода get класса Api и получает с сервера объект с массивом товаров.
+
+Конструктор:
+`constructor(api: IApi)` 
+
+Поля:  
+`private api: IApi`
+
+Методы:
+`getProducts(): Promise<IProduct[]>` — GET /product` - возвращает массив товаров.
+`createOrder(order: IOrderRequest): Promise<IOrderResponse>` — POST /order` - отправляет данные заказа.
