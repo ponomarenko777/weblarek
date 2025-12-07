@@ -1,5 +1,4 @@
 import { IBuyer, TPayment } from "../../types/index.ts";
-import { BuyerErrorKey } from "../../utils/errors.ts";
 
 export default class BuyerModel {
   private _payment: TPayment | null = null;
@@ -24,12 +23,15 @@ export default class BuyerModel {
   setPayment(v: TPayment): void {
     this._payment = v;
   }
+
   setAddress(v: string): void {
     this._address = v;
   }
+
   setEmail(v: string): void {
     this._email = v;
   }
+
   setPhone(v: string): void {
     this._phone = v;
   }
@@ -52,28 +54,28 @@ export default class BuyerModel {
 
   validate(): {
     valid: boolean;
-    errors: Partial<Record<keyof IBuyer, BuyerErrorKey>>;
+    errors: Partial<Record<keyof IBuyer, string>>;
   } {
-    const errors: Partial<Record<keyof IBuyer, BuyerErrorKey>> = {};
+    const errors: Partial<Record<keyof IBuyer, string>> = {};
 
     if (!this._payment) {
-      errors.payment = "paymentRequired";
+      errors.payment = "Выберите способ оплаты";
     }
 
     if (!this._address.trim()) {
-      errors.address = "addressRequired";
+      errors.address = "Введите адрес доставки";
     }
 
     if (!this._email.trim()) {
-      errors.email = "emailRequired";
+      errors.email = "Введите email";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this._email)) {
-      errors.email = "emailInvalid";
+      errors.email = "Некорректный email";
     }
 
     if (!this._phone.trim()) {
-      errors.phone = "phoneRequired";
+      errors.phone = "Введите номер телефона";
     } else if (!/^\+?\d[\d\s\-()]{8,}$/.test(this._phone)) {
-      errors.phone = "phoneInvalid";
+      errors.phone = "Некорректный номер телефона";
     }
 
     return {
