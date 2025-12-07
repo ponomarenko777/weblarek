@@ -1,4 +1,4 @@
-import { IProduct } from '../../types/index.ts';
+import { IProduct } from "../../types/index.ts";
 
 export default class CartModel {
   private _items: IProduct[] = [];
@@ -16,7 +16,7 @@ export default class CartModel {
   }
 
   remove(id: string): void {
-    this._items = this._items.filter(i => i.id !== id);
+    this._items = this._items.filter((i) => i.id !== id);
   }
 
   clear(): void {
@@ -32,6 +32,6 @@ export default class CartModel {
   }
 
   has(id: string): boolean {
-    return this._items.some(i => i.id === id);
+    return this._items.some((i) => i.id === id);
   }
 }

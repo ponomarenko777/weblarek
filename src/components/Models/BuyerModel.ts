@@ -1,10 +1,11 @@
-import { IBuyer, TPayment } from '../../types/index.ts';
+import { IBuyer, TPayment } from "../../types/index.ts";
+import { BuyerErrorKey } from "../../utils/errors.ts";
 
 export default class BuyerModel {
   private _payment: TPayment | null = null;
-  private _address = '';
-  private _email = '';
-  private _phone = '';
+  private _address = "";
+  private _email = "";
+  private _phone = "";
 
   constructor(initial?: Partial<IBuyer>) {
     if (initial?.payment) this._payment = initial.payment;
@@ -20,33 +21,64 @@ export default class BuyerModel {
     if (data.phone !== undefined) this._phone = data.phone;
   }
 
-  setPayment(v: TPayment): void { this._payment = v; }
-  setAddress(v: string): void { this._address = v; }
-  setEmail(v: string): void { this._email = v; }
-  setPhone(v: string): void { this._phone = v; }
+  setPayment(v: TPayment): void {
+    this._payment = v;
+  }
+  setAddress(v: string): void {
+    this._address = v;
+  }
+  setEmail(v: string): void {
+    this._email = v;
+  }
+  setPhone(v: string): void {
+    this._phone = v;
+  }
 
   getData(): IBuyer {
     return {
       payment: this._payment as TPayment,
       address: this._address,
       email: this._email,
-      phone: this._phone
+      phone: this._phone,
     };
   }
 
   clear(): void {
     this._payment = null;
-    this._address = '';
-    this._email = '';
-    this._phone = '';
+    this._address = "";
+    this._email = "";
+    this._phone = "";
   }
 
-  validate(): { valid: boolean; errors: Partial<Record<keyof IBuyer, string>> } {
-    const errors: Partial<Record<keyof IBuyer, string>> = {};
-    if (!this._payment) errors.payment = 'required';
-    if (!this._address.trim()) errors.address = 'required';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this._email)) errors.email = 'invalid';
-    if (!/^\+?\d[\d\s\-()]{8,}$/.test(this._phone)) errors.phone = 'invalid';
-    return { valid: Object.keys(errors).length === 0, errors };
+  validate(): {
+    valid: boolean;
+    errors: Partial<Record<keyof IBuyer, BuyerErrorKey>>;
+  } {
+    const errors: Partial<Record<keyof IBuyer, BuyerErrorKey>> = {};
+
+    if (!this._payment) {
+      errors.payment = "paymentRequired";
+    }
+
+    if (!this._address.trim()) {
+      errors.address = "addressRequired";
+    }
+
+    if (!this._email.trim()) {
+      errors.email = "emailRequired";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this._email)) {
+      errors.email = "emailInvalid";
+    }
+
+    if (!this._phone.trim()) {
+      errors.phone = "phoneRequired";
+    } else if (!/^\+?\d[\d\s\-()]{8,}$/.test(this._phone)) {
+      errors.phone = "phoneInvalid";
+    }
+
+    return {
+      valid: Object.keys(errors).length === 0,
+      errors,
+    };
   }
 }
