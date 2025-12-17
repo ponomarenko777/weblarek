@@ -1,5 +1,4 @@
-// src/components/Views/CatalogView.ts
-import { CardView, CardViewData } from './CardView';
+import { CardView, CardViewData } from "./CardView";
 
 export class CatalogView {
   private container: HTMLElement;
@@ -13,8 +12,7 @@ export class CatalogView {
   }
 
   render(items: CardViewData[]) {
-    // очищаем контейнер перед рендером
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
     items.forEach((item) => {
       const card = new CardView(item);
       this.container.appendChild(card.getElement());

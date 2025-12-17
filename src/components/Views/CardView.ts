@@ -1,8 +1,7 @@
-// src/components/Views/CardView.ts
-import { cloneTemplate } from '../../utils/dom';
-import { categoryMap } from '../../utils/constants';
-import { resolveImagePath } from '../../utils/utils';
-import { events } from '../base/Events';
+import { cloneTemplate } from "../../utils/dom";
+import { categoryMap } from "../../utils/constants";
+import { resolveImagePath } from "../../utils/utils";
+import { events } from "../base/Events";
 
 export interface CardViewData {
   id: string;
@@ -20,11 +19,11 @@ export class CardView {
   private imageEl: HTMLImageElement;
 
   constructor(private data: CardViewData) {
-    this.element = cloneTemplate<HTMLButtonElement>('card-catalog');
-    this.titleEl = this.element.querySelector('.card__title')!;
-    this.priceEl = this.element.querySelector('.card__price')!;
-    this.categoryEl = this.element.querySelector('.card__category')!;
-    this.imageEl = this.element.querySelector('.card__image')!;
+    this.element = cloneTemplate<HTMLButtonElement>("card-catalog");
+    this.titleEl = this.element.querySelector(".card__title")!;
+    this.priceEl = this.element.querySelector(".card__price")!;
+    this.categoryEl = this.element.querySelector(".card__category")!;
+    this.imageEl = this.element.querySelector(".card__image")!;
 
     this.render(data);
     this.attachEvents();
@@ -37,7 +36,7 @@ export class CardView {
 
     // Цена: если null → пишем "Бесценно"
     this.priceEl.textContent =
-      data.price === null ? 'Бесценно' : `${data.price} синапсов`;
+      data.price === null ? "Бесценно" : `${data.price} синапсов`;
 
     // Категория
     this.setCategory(data.category);
@@ -54,8 +53,8 @@ export class CardView {
   }
 
   private attachEvents() {
-    this.element.addEventListener('click', () => {
-      events.emit('card:select', { id: this.data.id });
+    this.element.addEventListener("click", () => {
+      events.emit("card:select", { id: this.data.id });
     });
   }
 
@@ -63,6 +62,8 @@ export class CardView {
     const entry = Object.values(categoryMap).find((c) => c.mod === category);
 
     this.categoryEl.textContent = entry?.label || category;
-    this.categoryEl.className = `card__category card__category_${entry?.mod || 'other'}`;
+    this.categoryEl.className = `card__category card__category_${
+      entry?.mod || "other"
+    }`;
   }
 }

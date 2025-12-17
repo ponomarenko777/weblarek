@@ -1,3 +1,5 @@
+import { API_ORIGIN } from "./constants";
+
 export function pascalToKebab(value: string): string {
   return value.replace(/([a-z0–9])([A-Z])/g, "$1-$2").toLowerCase();
 }
@@ -36,6 +38,8 @@ export function ensureElement<T extends HTMLElement>(
 ): T {
   if (isSelector(selectorElement)) {
     const elements = ensureAllElements<T>(selectorElement, context);
+    console.log(elements, "elements");
+
     if (elements.length > 1) {
       console.warn(`selector ${selectorElement} return more then one element`);
     }
@@ -87,9 +91,6 @@ export function getObjectProperties(
     .map(([name]) => name);
 }
 
-/**
- * Устанавливает dataset атрибуты элемента
- */
 export function setElementData<T extends Record<string, unknown> | object>(
   el: HTMLElement,
   data: T
@@ -99,9 +100,6 @@ export function setElementData<T extends Record<string, unknown> | object>(
   }
 }
 
-/**
- * Получает типизированные данные из dataset атрибутов элемента
- */
 export function getElementData<T extends Record<string, unknown>>(
   el: HTMLElement,
   scheme: Record<string, Function>
@@ -113,9 +111,6 @@ export function getElementData<T extends Record<string, unknown>>(
   return data as T;
 }
 
-/**
- * Проверка на простой объект
- */
 export function isPlainObject(obj: unknown): obj is object {
   const prototype = Object.getPrototypeOf(obj);
   return prototype === Object.getPrototypeOf({}) || prototype === null;
@@ -125,11 +120,6 @@ export function isBoolean(v: unknown): v is boolean {
   return typeof v === "boolean";
 }
 
-/**
- * Фабрика DOM-элементов в простейшей реализации
- * здесь не учтено много факторов
- * в интернет можно найти более полные реализации
- */
 export function createElement<T extends HTMLElement>(
   tagName: keyof HTMLElementTagNameMap,
   props?: Partial<Record<keyof T, string | boolean | object>>,
@@ -153,4 +143,39 @@ export function createElement<T extends HTMLElement>(
     }
   }
   return element;
+}
+
+export function resolveImagePath(path: string): string {
+  if (!path) return "";
+
+  if (/^https?:\/\//.test(path)) {
+    return path
+      .replace("/api/weblarek/", "/content/weblarek/")
+      .replace(/\.svg(\?.*)?$/, ".png$1");
+  }
+
+  if (path.startsWith("/content/weblarek/")) {
+    return `${API_ORIGIN.replace(/\/$/, "")}${path}`;
+  }
+
+  if (path.startsWith("/api/weblarek/")) {
+    const file = path
+      .replace("/api/weblarek/", "")
+      .replace(/\.svg(\?.*)?$/, ".png$1");
+    return `${API_ORIGIN.replace(/\/$/, "")}/content/weblarek/${file}`;
+  }
+
+  const file = path.replace(/^\//, "").replace(/\.svg(\?.*)?$/, ".png$1");
+  return `${API_ORIGIN.replace(/\/$/, "")}/content/weblarek/${file}`;
+}
+
+export enum EventNames {
+  CardSelect = "card:select",
+  CartAdd = "cart:add",
+  CartRemove = "cart:remove",
+  CartRemoveById = "cart:remove-by-id",
+  CartOrder = "cart:order",
+  OrderNext = "order:next",
+  OrderConfirm = "order:confirm",
+  SuccessClose = "success:close",
 }

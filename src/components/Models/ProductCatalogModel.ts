@@ -6,6 +6,8 @@ export default class ProductCatalogModel {
 
   constructor(initial?: IProduct[]) {
     if (initial) this._items = initial;
+    console.log();
+    
   }
 
   setItems(items: IProduct[]): void {

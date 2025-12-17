@@ -1,16 +1,11 @@
-// src/components/Views/ContactsFormView.ts
-import { cloneTemplate } from '../../utils/dom';
-import { events } from '../base/Events';
+import { cloneTemplate } from "../../utils/dom";
+import { events } from "../base/Events";
 
 export interface ContactsData {
   email: string;
   phone: string;
 }
 
-/**
- * Форма №2 — контакты (email, phone)
- * Генерирует: 'order:confirm' с detail: { email, phone }
- */
 export class ContactsFormView {
   private element: HTMLFormElement;
   private emailInput: HTMLInputElement;
@@ -19,17 +14,17 @@ export class ContactsFormView {
   private submitBtn: HTMLButtonElement;
 
   constructor() {
-    this.element = cloneTemplate<HTMLFormElement>('contacts');
+    this.element = cloneTemplate<HTMLFormElement>("contacts");
 
     this.emailInput = this.element.querySelector('input[name="email"]')!;
     this.phoneInput = this.element.querySelector('input[name="phone"]')!;
-    this.errorsEl = this.element.querySelector('.form__errors')!;
+    this.errorsEl = this.element.querySelector(".form__errors")!;
     this.submitBtn = this.element.querySelector('button[type="submit"]')!;
 
-    this.emailInput.addEventListener('input', () => this.updateState());
-    this.phoneInput.addEventListener('input', () => this.updateState());
+    this.emailInput.addEventListener("input", () => this.updateState());
+    this.phoneInput.addEventListener("input", () => this.updateState());
 
-    this.element.addEventListener('submit', (e) => {
+    this.element.addEventListener("submit", (e) => {
       e.preventDefault();
       const { valid } = this.validate();
       if (!valid) return;
@@ -39,8 +34,7 @@ export class ContactsFormView {
         phone: this.phoneInput.value.trim(),
       };
 
-      // передаём сразу email и phone (как ожидает презентер)
-      events.emit<ContactsData>('order:confirm', data);
+      events.emit<ContactsData>("order:confirm", data);
     });
 
     this.updateState();
@@ -55,12 +49,12 @@ export class ContactsFormView {
     const phone = this.phoneInput.value.trim();
 
     const emailOk = /\S+@\S+\.\S+/.test(email);
-    const digits = phone.replace(/\D/g, '');
+    const digits = phone.replace(/\D/g, "");
     const phoneOk = digits.length >= 10;
 
     const messages: string[] = [];
-    if (!emailOk) messages.push('Неверный email');
-    if (!phoneOk) messages.push('Неверный телефон');
+    if (!emailOk) messages.push("Неверный email");
+    if (!phoneOk) messages.push("Неверный телефон");
 
     return {
       valid: emailOk && phoneOk,
@@ -71,6 +65,6 @@ export class ContactsFormView {
   private updateState() {
     const { valid, messages } = this.validate();
     this.submitBtn.disabled = !valid;
-    this.errorsEl.textContent = valid ? '' : messages.join(', ');
+    this.errorsEl.textContent = valid ? "" : messages.join(", ");
   }
 }

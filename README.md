@@ -199,16 +199,14 @@ address: string; - Адрес доставки заказа.
 
 Методы:
 `getProducts(): Promise<IProduct[]>` — GET /product`- возвращает массив товаров.`createOrder(order: IOrderRequest): Promise<IOrderResponse>` — POST /order` - отправляет данные заказа.
- 
- 
 
+### Слой Presenter
 
-
- ### Слой Presenter
 Для организации логики приложения используется отдельный слой Presenter.
 Главный класс — AppPresenter (src/components/Presenter/AppPresenter.ts).
 
-**Назначение:**Класс AppPresenter — это центральный слой приложения, реализующий паттерн MVP.
+### Класс AppPresenter
+
 Он отвечает за инициализацию, загрузку данных, подписку на события и связь между моделями (Catalog, Cart, Buyer) и вьюхами (CatalogView, CartView, ProductPreviewView, формы заказа и успеха), и слой коммуникации (Communication). Обеспечивает подписку на события и маршрутизацию данных между слоями.
 
 Основные задачи:
@@ -235,71 +233,47 @@ import { AppPresenter } from './components/Presenter/AppPresenter';
 
 const app = new AppPresenter();
 app.init();
- ### Слой View
- 
-В проекте реализован отдельный слой представления (View-компоненты), отвечающий за отрисовку интерфейса и генерацию событий.
 
-Основные классы:
-CardView (CardView.ts)
+### Слой View
+
+Отвечает за отрисовку интерфейса и генерацию событий.
+
+### Класс CardView
+
 Отвечает за отображение карточки товара в каталоге.
 Генерирует событие card:select при клике.
 
-CatalogView (CatalogView.ts)
+### Класс CatalogView
+
 Контейнер для списка карточек (CardView).
 Используется для отрисовки каталога товаров.
 
-CartView (CartView.ts)
+### Класс CartView
+
 Отвечает за отображение корзины: список товаров, общая сумма, кнопка оформления заказа.
 Генерирует события cart:remove (удаление по индексу) и cart:order (переход к оформлению).
 
-ProductPreviewView (ProductPreviewView.ts)
+### Класс ProductPreviewView
+
 Используется для отображения модалки с подробной информацией о товаре.
 Генерирует событие cart:add при добавлении товара в корзину.
 
-OrderFormView (OrderFormView.ts)
+### Класс OrderFormView
+
 Шаг 1 оформления заказа: выбор способа оплаты и ввод адреса.
 Генерирует событие order:next.
 
-ContactsFormView (ContactsFormView.ts)
+### Класс ContactsFormView
+
 Шаг 2 оформления заказа: ввод email и телефона.
 Генерирует событие order:confirm.
 
-ModalView (ModalView.ts)
+### Класс ModalView
+
 Универсальный контроллер модальных окон.
 Управляет показом/скрытием, блокировкой скролла, генерирует события modal:open и modal:close.
 
-SuccessView (SuccessView.ts)
+### Класс SuccessView
+
 Показывает результат успешного оформления заказа.
 Генерирует событие success:close.
-
-Events
-Для событийного взаимодействия между слоями приложения используется собственная реализация брокера событий EventEmitter (файл Events.ts).
-Это позволяет максимально изолировать модули друг от друга и реализовать архитектуру в стиле Publisher–Subscriber.
-
-Основные возможности:
-on(event, callback) — подписка на событие.
-off(event, callback) — отписка от события.
-emit(event, data?) — инициирует событие с переданными данными.
-onAll(callback) — подписка на все события сразу.
-offAll() — сброс всех подписчиков.
-trigger(event, context?) — вспомогательный метод, создающий callback для автоматической генерации событий.
-Примеры использования:
-// Подписка на добавление товара
-events.on<IProduct>('cart:add', (product) => {
-  console.log('Товар добавлен в корзину:', product.title);
-});
-
-// Генерация события
-events.emit('cart:add', someProduct);
-
-// Подписка на все события
-events.onAll(({ eventName, data }) => {
-  console.log('Событие:', eventName, 'Данные:', data);
-});
-Роль в приложении:
-Views (например, CardView, CartView, OrderFormView) генерируют события через events.emit.
-
-AppPresenter подписывается на эти события через events.on и управляет моделями (Catalog, Cart, Buyer).
-
-Таким образом достигается слабая связанность: слои не знают друг о друге напрямую, а общаются только через событийный канал.
-

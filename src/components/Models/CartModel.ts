@@ -3,8 +3,8 @@ import { IProduct } from "../../types/index.ts";
 export default class CartModel {
   private _items: IProduct[] = [];
 
-  constructor(initial?: IProduct[]) {
-    if (initial) this._items = initial;
+  constructor(initial: IProduct[] = []) {
+    this._items = initial;
   }
 
   getItems(): IProduct[] {

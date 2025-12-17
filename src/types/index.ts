@@ -40,3 +40,33 @@ export interface IOrderResponse {
   id: string;
   total?: number;
 }
+export interface IOrder {
+  items: string[];
+  payment: TPayment;
+  address: string;
+  email: string;
+  phone: string;
+  total: number;
+}
+
+export interface CardSelectPayload {
+  id: string;
+}
+
+export interface CartRemovePayload {
+  index: number;
+}
+
+export interface CartRemoveByIdPayload {
+  id: string;
+}
+
+export interface OrderNextPayload {
+  payment: IBuyer["payment"];
+  address: string;
+}
+
+export interface OrderConfirmPayload {
+  email: string;
+  phone: string;
+}
